@@ -1,0 +1,6 @@
+apiVersion: socgen.org/v1 
+kind: Nginx 
+metadata: 
+  name: nginx-testing
+spec: 
+    nodeport: 30567
