@@ -2,5 +2,6 @@ apiVersion: socgen.org/v1
 kind: Nginx 
 metadata: 
   name: nginx-testing
+  namespace: nginx-ns
 spec: 
     nodeport: 30567
