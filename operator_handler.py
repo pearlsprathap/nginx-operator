@@ -40,6 +40,48 @@ def create_fn(body, spec, **kwargs):
     # Update status
     msg = f"Pod and Service created for nginx object {name}"
     return {'message': msg}
+
+
+@kopf.on.update('socgen.org', 'v1', 'nginx')
+def update_fn(body, spec, **kwargs):
+
+    # Get info from nginx object
+    name = body['metadata']['name']
+    namespace = body['metadata']['namespace']
+    nodeport = spec['nodeport']
+    image =  spec['image']
+    port = spec['port']
+    if not nodeport:
+        raise kopf.HandlerFatalError(f"Nodeport must be set. Got {nodeport}.")
+
+
+    # Pod template
+    pod = {'apiVersion': 'v1', 'metadata': {'name' : name, 'labels': {'app': 'nginx'}},'spec': {'containers': [ { 'image': image, 'name': name }]}}
+
+
+    # Service template
+    svc = {'apiVersion': 'v1', 'metadata': {'name' : name}, 'spec': { 'selector': {'app': 'nginx'}, 'type': 'NodePort', 'ports': [{ 'port': port, 'targetPort': port,  'nodePort': nodeport }]}}
+
+    # Make the Pod and Service the children of the nginx object
+    kopf.adopt(pod, owner=body)
+    kopf.adopt(svc, owner=body)
+
+
+    # Object used to communicate with the API Server
+    api = kubernetes.client.CoreV1Api()
+
+    # Patch Pod
+    obj = api.patch_namespaced_pod(name,namespace, pod)
+    print(f"Pod {obj.metadata.name} patched")
+
+    # Patch Service
+    obj = api.patch_namespaced_service(name,namespace, svc)
+    print(f"NodePort Service {obj.metadata.name} patched, exposing on port {obj.spec.ports[0].node_port}")
+
+    # Update status
+    msg = f"Pod and Service patched for nginx object {name}"
+    return {'message': msg}
+
 @kopf.on.delete('socgen.org', 'v1', 'nginx')
 def delete(body, **kwargs):
     msg = f"Nginx {body['metadata']['name']} and its Pod / Service children deleted"
