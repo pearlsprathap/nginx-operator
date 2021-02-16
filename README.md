@@ -22,7 +22,7 @@ This operator will help to install Nginx server on customized port, namespace, n
  - Create service account and role bindings for the service account
  
  	          kubectl apply -f service_account.yaml
-	 	        kubectl apply -f service_account_binding.yaml
+	 	  kubectl apply -f service_account_binding.yaml
  
 - Deploy for operator in the cluster 
 
