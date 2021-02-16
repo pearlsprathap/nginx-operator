@@ -7,10 +7,9 @@ def create_fn(body, spec, **kwargs):
     # Get info from nginx object
     name = body['metadata']['name']
     namespace = body['metadata']['namespace']
-#    nodeport = body['metadata']['spec']['nodeport']
     nodeport = spec['nodeport'] 
-    image = 'nginx'
-    port = 80
+    image =  spec['image']
+    port = spec['port']
     if not nodeport:
         raise kopf.HandlerFatalError(f"Nodeport must be set. Got {nodeport}.")
 

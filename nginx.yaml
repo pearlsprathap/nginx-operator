@@ -2,6 +2,8 @@ apiVersion: socgen.org/v1
 kind: Nginx 
 metadata: 
   name: nginx-testing
-  namespace: nginx-ns
+  #  namespace: nginx-ns
 spec: 
     nodeport: 30567
+    port: 80
+    image: "nginx:1.18.0"
