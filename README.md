@@ -7,7 +7,7 @@ This operator will help to install Nginx server on customized port, namespace, n
 
 - Working kubernetes cluster 
 - Account with cluster admin privileges
-- Access to internet.
+- Access to internet
 
 # Test case
 
